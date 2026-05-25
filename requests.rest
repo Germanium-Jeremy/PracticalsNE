@@ -1,0 +1,34 @@
+@base-url = http://localhost:8080
+@auth-url = /api/auth
+@task-url = /api/tasks
+@token = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJKZXJlbXkiLCJpYXQiOjE3Nzk5MDc2NzQsImV4cCI6MTc3OTk5NDA3NH0.23T6W4uThfFxfp0WcivUM8xpl4HkJr5xDtlvAD-ajdIRX6q0AZKJCG2xq_duoKvCcbiWqvsVJJfwfgFzgnaIZQ
+
+### Index route
+GET {{base-url}}
+Content-Type: application/json
+
+### Login
+POST {{base-url}}{{auth-url}}/login
+Content-Type: application/json
+
+{ "username": "Jeremy", "password": "1234567890" }
+
+
+### Register
+POST {{base-url}}{{auth-url}}/signup
+Content-Type: application/json
+
+{ "username": "Jeremy", "password": "1234567890", "email": "jeremy@email.com" }
+
+### Get all tasks (requires authentication)
+GET {{base-url}}{{task-url}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+
+### Create a new task (requires authentication)
+POST {{base-url}}{{task-url}}
+Authorization: Bearer {{token}} 
+Content-Type: application/json
+
+{ "title": "Task 3", "description": "This is a new task created via Rest Client" }
