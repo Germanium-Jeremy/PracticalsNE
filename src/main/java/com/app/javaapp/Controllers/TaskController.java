@@ -5,6 +5,7 @@ import com.app.javaapp.Services.TaskServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class TaskController {
 
     // Create a new task
     @PostMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
         Task createdTask = taskService.createTask(task);
         return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
@@ -25,6 +27,7 @@ public class TaskController {
 
     // Get all tasks
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = taskService.getAllTasks();
         return ResponseEntity.ok(tasks);
@@ -32,6 +35,7 @@ public class TaskController {
 
     // Get a single task by ID
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         Task task = taskService.getTaskById(id);
         return ResponseEntity.ok(task);
@@ -39,6 +43,7 @@ public class TaskController {
 
     // Update a task
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
         Task updatedTask = taskService.updateTask(id, task);
         return ResponseEntity.ok(updatedTask);
@@ -46,6 +51,7 @@ public class TaskController {
 
     // Delete a task
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
@@ -53,6 +59,7 @@ public class TaskController {
 
     // Get tasks by completion status
     @GetMapping("/status")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Task>> getTasksByStatus(@RequestParam boolean completed) {
         List<Task> tasks = taskService.getTasksByStatus(completed);
         return ResponseEntity.ok(tasks);
