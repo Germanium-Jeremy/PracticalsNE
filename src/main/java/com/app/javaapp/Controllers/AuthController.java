@@ -9,6 +9,7 @@ import com.app.javaapp.Security.JwtUtils;
 import com.app.javaapp.Services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -79,6 +80,7 @@ public class AuthController {
                 roles
         );
 
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON)
+                .body("{\"message\": \"User registered successfully\", \"username\": \"" + newUser.getUsername() + "\"}");
     }
 }
