@@ -1,5 +1,6 @@
 package com.app.javaapp.Models;
 
+import com.app.javaapp.Listeners.UserEntityListener;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -7,6 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@EntityListeners(UserEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
