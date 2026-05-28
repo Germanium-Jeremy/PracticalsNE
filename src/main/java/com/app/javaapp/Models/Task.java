@@ -13,6 +13,11 @@ public class Task {
 
     @Column(nullable = false)
     private String title;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private String description;
     private boolean completed;
     private LocalDateTime createdAt;
@@ -30,6 +35,15 @@ public class Task {
         this.completed = false;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public Task(String title, String description, User user) {
+        this.title = title;
+        this.description = description;
+        this.completed = false;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        this.user = user;
     }
 
     // Getters and Setters
@@ -80,5 +94,13 @@ public class Task {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
