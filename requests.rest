@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:3000
+@token = secret-token-placeholder
+### Call Base URL
+GET {{baseUrl}}
+Content-Type: application/json
+
+
+### Register a new user
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{ "username": "user", "email": "user@email.com", "password": "password123" }
+
+
+### Login with existing user
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "user@email.com", "password": "password123" }
+
+
+### Get all users (requires authentication)
+GET {{baseUrl}}/api/profile/allUsers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+
+### Get a single user by email (requires admin role)
+GET {{baseUrl}}/api/profile/getUser?field=role&value=admin
+Authorization: Bearer {{token}}
+Content-Type: application/json
