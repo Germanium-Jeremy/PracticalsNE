@@ -3,9 +3,11 @@ package com.app.javaapp.Controllers;
 import com.app.javaapp.DTO.JwtResponse;
 import com.app.javaapp.DTO.LoginRequest;
 import com.app.javaapp.DTO.SignupRequest;
+import com.app.javaapp.Models.EmailMessage;
 import com.app.javaapp.Models.Role;
 import com.app.javaapp.Models.User;
 import com.app.javaapp.Security.JwtUtils;
+import com.app.javaapp.Services.EmailProducerService;
 import com.app.javaapp.Services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    private EmailProducerService emailProducerService;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -79,6 +84,13 @@ public class AuthController {
                 signupRequest.getPassword(),
                 roles
         );
+
+        EmailMessage welcomeEmail = new EmailMessage(
+                signupRequest.getEmail(),
+                "Welcome to Task Manager!",
+                "Thanks for signing up, " + signupRequest.getUsername() + "!"
+        );
+        emailProducerService.sendEmailToQueue(welcomeEmail);
 
         return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON)
                 .body("{\"message\": \"User registered successfully\", \"username\": \"" + newUser.getUsername() + "\"}");
