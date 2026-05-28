@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Welcome!</title>
+    <style>
+        /* Add your styles here */
+        .header { color: #2d8cf0; }
+    </style>
 </head>
 <body>
-$END$
+    <h2 class="header">Welcome, <span th:text="${username}">User</span>!</h2>
+    <p>Thank you for signing up for Task Manager.</p>
+    <p>We're excited to have you on board.</p>
 </body>
 </html>
