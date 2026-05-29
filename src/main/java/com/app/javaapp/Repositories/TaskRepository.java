@@ -1,0 +1,4 @@
+package com.app.javaapp.Repositories;
+
+public interface TaskRepository {
+}
