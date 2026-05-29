@@ -1,14 +1,31 @@
 package com.app.javaapp.Models;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(unique = true, nullable = true)
     private String email;
+
+    @Column(nullable = false)
     private String password; // encoded
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+    
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
