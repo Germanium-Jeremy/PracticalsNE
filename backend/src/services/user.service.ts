@@ -1,11 +1,10 @@
 import { getAllUsers, getUserByEmail, getUserById, getUserByRole } from "../database/repositories/user.repo.js";
 
-export async function getUsers() {
-    const users = await getAllUsers();
-    return users;
+export async function service_getUsers() {
+    return await getAllUsers();
 }
 
-export async function getAUser(field: string, value: string) {
+export async function service_getAUser(field: string, value: string) {
     let user;
     if (field === 'email') {
         user = await getUserByEmail(value);

@@ -2,7 +2,7 @@ import { createUser, getUserByEmail } from "../database/repositories/user.repo.j
 import jwt from 'jsonwebtoken';
 import { comparePassword } from "../utils/password.js";
 
-export async function registerUser(username: string, email: string, password: string) {
+export async function service_registerUser(username: string, email: string, password: string) {
 
     const existing = await getUserByEmail(email);
 
@@ -18,10 +18,10 @@ export async function registerUser(username: string, email: string, password: st
         { expiresIn: "1h" }
     );
 
-    return { token, userId, username, email };
+    return { token, userId, username, email, role: 'user' };
 }
 
-export async function loginUser(email: string, password: string) {
+export async function service_loginUser(email: string, password: string) {
     const user = await getUserByEmail(email);
 
     if (!user) {
@@ -40,5 +40,5 @@ export async function loginUser(email: string, password: string) {
         { expiresIn: "1h" }
     );
 
-    return { token, userId: user.id, username: user.username, email: user.email };
+    return { token, userId: user.id, username: user.username, email: user.email, role: user.role };
 }

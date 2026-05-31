@@ -1,18 +1,19 @@
-import { sendWelcomeEmail } from "../jobs/sendEmail.js";
-import { registerUser, loginUser } from "../services/auth.service.js";
+import { service_loginUser, service_registerUser } from "../services/auth.service.js";
 import type { Request, Response } from "express";
+import { welcomeEmailTemplate } from "../templates/WelcomeEmail.js";
+import { sendEmail } from '../jobs/sendEmail.js';
 
-export async function register(req: Request, res: Response) {
+export async function controller_registerUser(req: Request, res: Response) {
     try {
         const { username, email, password } = req.body;
 
-        const data = await registerUser(username, email, password);
+        const data = await service_registerUser(username, email, password);
 
         res.status(201).json(data);
 
         setImmediate(async () => {
             try {
-                await sendWelcomeEmail(data.email, data.username);
+                await sendEmail(data.email, 'Welcome to Our App', welcomeEmailTemplate(data.username));
             } catch (err) {
                 console.error(err);
             }
@@ -22,11 +23,11 @@ export async function register(req: Request, res: Response) {
     }
 }
 
-export async function login(req: Request, res: Response) {
+export async function controller_loginUser(req: Request, res: Response) {
     try {
         const { email, password } = req.body;
 
-        const data = await loginUser(email, password);
+        const data = await service_loginUser(email, password);
 
         res.status(200).json(data);
     } catch (err: any) {

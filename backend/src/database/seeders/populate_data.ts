@@ -4,7 +4,7 @@ import { createUser, getUserByRole } from '../repositories/user.repo.js';
 export function seedAdminUser() {
     const admin = {
         username: 'admin',
-        email: 'admin@example.com',
+        email: 'golan72331@4nly.com',
         password: 'admin123' // later hash this
     };
 

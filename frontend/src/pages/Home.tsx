@@ -21,7 +21,10 @@ export default function Home() {
                 Authentication successful.
             </p>
 
-            <div className="max-w-50">
+            <div className="max-w-50 flex flex-col gap-4 mt-6">
+                <Button onClick={() => navigate('/dashboard/extinguishers')}>
+                    Go to extinguishers
+                </Button>
                 <Button onClick={handleLogout}>
                     Logout
                 </Button>

@@ -30,7 +30,8 @@ export default function Login() {
             login(data.token, {
                 email: data.email,
                 username: data.username,
-                userId: data.userId
+                userId: data.userId,
+                role: data.role,
             });
 
             navigate('/dashboard');

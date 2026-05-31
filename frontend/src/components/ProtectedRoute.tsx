@@ -1,21 +1,25 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Loader from './ui/Loader';
 
 
-export default function ProtectedRoute() {
+export function ProtectedRoute() {
     const { token, loading } = useAuth();
 
-    if (loading) {
-        return (
-            <div className='flex h-screen justify-center align-middle'>
-                <div className='border-y-2 border-blue-500 rounded-full animate-spin w-10 h-10 my-auto'></div>
-            </div>
-        )
-    }
+    if (loading) return <Loader />
+
 
     if (!token) {
         return <Navigate to="/auth" replace />;
     }
 
     return <Outlet />;
+}
+
+export function RoleProtectedRoute({ allowedRoles }: { allowedRoles: string[] }) {
+    const { loading, user } = useAuth();
+
+    if (loading) return <Loader />
+    if (!user || !allowedRoles.includes(user.role)) return <Navigate to="/dashboard" replace />
+    return <Outlet />
 }

@@ -6,19 +6,21 @@ import { Logger } from './middlewares/Logger.js';
 import { initDatabase } from './database/init.js';
 import authRoutes from './routes/auth.route.js';
 import userRoutes from './routes/user.route.js';
+import feRoutes from './routes/fe.route.js'
+import './jobs/extinguisherNotifications.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const { PORT } = process.env;
 
 
 // Middleware configurations
 app.use(Logger);
 app.use(cors({
-    origin: process.env.frontend_url,
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
@@ -34,6 +36,7 @@ app.get('/error', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', userRoutes);
+app.use('/api/extenguisher', feRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ error: 'Not Found' });
