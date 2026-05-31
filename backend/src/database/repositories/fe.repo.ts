@@ -99,7 +99,7 @@ export const getNumberOfExtenguishers = async (field?: string, value?: string): 
 
 export const getExtenguisherByStatus = async (status: string): Promise<FireExtinguisher[] | unknown> => {
     return new Promise((resolve, reject) => {
-        db.get(`SELECT * FROM fire_extinguisher WHERE status = ?`, [status], function(err, rows) {
+        db.all(`SELECT * FROM fire_extinguisher WHERE status = ?`, [status], function(err, rows) {
             if (err) {
                 reject(err);
             } else {
@@ -112,7 +112,7 @@ export const getExtenguisherByStatus = async (status: string): Promise<FireExtin
 export const getExtenguisherByCreatedAt = async (created_at: string): Promise<FireExtinguisher[] | unknown> => {
     return new Promise((resolve, reject) => {
         // created_at must be UTC 'YYYY-MM-DD HH:MM:SS'
-        db.get(`SELECT * FROM fire_extinguisher WHERE created_at = ?`, [created_at], function(err, rows) {
+        db.all(`SELECT * FROM fire_extinguisher WHERE created_at = ?`, [created_at], function(err, rows) {
             if (err) {
                 reject(err);
             } else {
@@ -125,7 +125,7 @@ export const getExtenguisherByCreatedAt = async (created_at: string): Promise<Fi
 export const getExtenguisherByBoughtAt = async (bought_at: string): Promise<FireExtinguisher[] | unknown> => {
     return new Promise((resolve, reject) => {
         // bought_at must be UTC 'YYYY-MM-DD HH:MM:SS'
-        db.get(`SELECT * FROM fire_extinguisher WHERE bought_at = ?`, [bought_at], function(err, rows) {
+        db.all(`SELECT * FROM fire_extinguisher WHERE bought_at = ?`, [bought_at], function(err, rows) {
             if (err) {
                 reject(err);
             } else {
@@ -135,10 +135,10 @@ export const getExtenguisherByBoughtAt = async (bought_at: string): Promise<Fire
     })
 }
 
-export const getExtenguisherByReturnedAt = async (returned_at: string): Promise<FireExtinguisher | unknown> => {
+export const getExtenguisherByReturnedAt = async (returned_at: string): Promise<FireExtinguisher[] | unknown> => {
     return new Promise((resolve, reject) => {
         // returned_at must be UTC 'YYYY-MM-DD HH:MM:SS'
-        db.get(`SELECT * FROM fire_extinguisher WHERE returned_at = ?`, [returned_at], function(err, rows) {
+        db.all(`SELECT * FROM fire_extinguisher WHERE returned_at = ?`, [returned_at], function(err, rows) {
             if (err) {
                 reject(err);
             } else {
