@@ -10,6 +10,8 @@ export function createFireExtinguisherTable() {
             returned_at DATETIME,
             status TEXT NOT NULL DEFAULT 'in_stock',
             expires_at DATETIME NOT NULL DEFAULT (datetime('now', '+2 minutes')),
+            user_notified INTEGER NOT NULL DEFAULT 0,
+            admin_notified INTEGER NOT NULL DEFAULT 0,
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     `, (err) => {

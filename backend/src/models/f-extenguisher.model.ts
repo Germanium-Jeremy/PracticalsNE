@@ -6,4 +6,6 @@ export interface FireExtinguisher {
     status: string;
     returned_at: string | null;
     expires_at: string;
+    user_notified: number;
+    admin_notified: number;
 }

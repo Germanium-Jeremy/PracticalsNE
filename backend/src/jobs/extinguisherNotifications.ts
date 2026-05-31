@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import { getExpiringExtinguishers, getExpiredExtinguishers } from '../database/repositories/fe.repo.js';
+import db from '../database/database.js';
 import { getUserById } from '../database/repositories/user.repo.js';
 
 import { sendEmail } from './sendEmail.js';
@@ -13,11 +14,12 @@ cron.schedule('*/30 * * * * *', async () => {
         const expiring = await getExpiringExtinguishers(60); // 60 seconds
         console.log('Got expiring extinguishers:', expiring.length);
         for (const extinguisher of expiring) {
-            if (extinguisher.user_id) {
+            if (extinguisher.user_id && extinguisher.user_notified === 0) {
                 const user = await getUserById(extinguisher.user_id);
                 if (user && user.email) {
                     const html = notifyExpiry(user.username, extinguisher.id, extinguisher.expires_at);
                     await sendEmail(user.email, 'Your Fire Extinguisher is About to Expire', html);
+                    db.run('UPDATE fire_extinguisher SET user_notified = 1 WHERE id = ?', [extinguisher.id]);
                     console.log(`Notified user ${user.email} about expiring extinguisher ${extinguisher.id}`);
                 }
             }
@@ -33,9 +35,12 @@ cron.schedule('*/5 * * * * *', async () => {
     try {
         const expired = await getExpiredExtinguishers();
         for (const extinguisher of expired) {
-            const html = notifyAdminExpiry(extinguisher.user_id, extinguisher.id, extinguisher.expires_at);
-            await sendEmail(ADMIN_EMAIL, 'Fire Extinguisher Expired', html);
-            console.log(`Notified admin about expired extinguisher ${extinguisher.id}`);
+            if (extinguisher.admin_notified === 0) {
+                const html = notifyAdminExpiry(extinguisher.user_id, extinguisher.id, extinguisher.expires_at);
+                await sendEmail(ADMIN_EMAIL, 'Fire Extinguisher Expired', html);
+                db.run('UPDATE fire_extinguisher SET admin_notified = 1 WHERE id = ?', [extinguisher.id]);
+                console.log(`Notified admin about expired extinguisher ${extinguisher.id}`);
+            }
         }
     } catch (err) {
         console.error('Error in admin expiry notification:', err);
