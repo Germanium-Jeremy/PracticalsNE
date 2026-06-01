@@ -1,7 +1,7 @@
 @base-url = http://localhost:8080
 @auth-url = /api/auth
 @task-url = /api/tasks
-@token = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJHaGVyZW1pYWgiLCJpYXQiOjE3ODAwNDQwNjcsImV4cCI6MTc4MDEzMDQ2N30.XHjN7DQq00ipyCdW9fTC8k9pE_IC1XVFf-owHRjpBBaRu20S8hSKwai7JDaIzqQlNsJkwrVYr1CQ4W9IIU6_nw
+@token = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiZXRlcDcyMDQxIiwiaWF0IjoxNzgwMTU3MTM3LCJleHAiOjE3ODAyNDM1Mzd9.5YOC4iitH94wztP69RR5HzST8M8GA7cc3dOV7RZXEeE9iHnBxgK7e_DOCMbLRcO2knGyQlNCkioY3ZiLcjJu6g
 
 ### Index route
 GET {{base-url}}
@@ -11,14 +11,14 @@ Content-Type: application/json
 POST {{base-url}}{{auth-url}}/login
 Content-Type: application/json
 
-{ "username": "Gheremiah", "password": "Passw0rd@123" }
+{ "username": "betep72041", "password": "Passw0rd@123" }
 
 
 ### Register
 POST {{base-url}}{{auth-url}}/signup
 Content-Type: application/json
 
-{ "username": "Gheremiah", "password": "Passw0rd@123", "email": "gheremiahwhole@gmail.com", "roles": ["user"] }
+{ "username": "betep72041", "password": "Passw0rd@123", "email": "betep72041@googxs.com", "roles": ["user"] }
 
 ### Get all tasks (requires authentication)
 GET {{base-url}}{{task-url}}
