@@ -11,9 +11,11 @@ import java.util.List;
 public class TariffService {
 
     private final TariffRepository tariffRepository;
+    private final PenaltyConfigurationRepository penaltyConfigurationRepository;
 
-    public TariffService(TariffRepository tariffRepository) {
+    public TariffService(TariffRepository tariffRepository, PenaltyConfigurationRepository penaltyConfigurationRepository) {
         this.tariffRepository = tariffRepository;
+        this.penaltyConfigurationRepository = penaltyConfigurationRepository;
     }
 
     @Transactional
@@ -46,5 +48,44 @@ public class TariffService {
     public Tariff getActiveTariff(MeterType meterType) {
         return tariffRepository.findActiveTariffByMeterType(meterType)
                 .orElseThrow(() -> new RuntimeException("No active tariff found for " + meterType));
+    }
+
+    /**
+     * Creates a new penalty configuration. If the new one is active, all others are deactivated.
+     * @param request the penalty configuration details
+     * @return the saved penalty configuration
+     */
+    @Transactional
+    public PenaltyConfiguration createPenaltyConfiguration(PenaltyConfigurationRequest request) {
+        if (request.isActive()) {
+            penaltyConfigurationRepository.findByActiveTrue().ifPresent(p -> {
+                p.setActive(false);
+                penaltyConfigurationRepository.save(p);
+            });
+        }
+
+        PenaltyConfiguration penalty = PenaltyConfiguration.builder()
+                .name(request.getName())
+                .fixedAmount(request.getFixedAmount())
+                .percentagePerMonth(request.getPercentagePerMonth())
+                .active(request.isActive())
+                .build();
+
+        return penaltyConfigurationRepository.save(penalty);
+    }
+
+    /**
+     * Returns all penalty configurations.
+     */
+    public List<PenaltyConfiguration> getAllPenaltyConfigurations() {
+        return penaltyConfigurationRepository.findAll();
+    }
+
+    /**
+     * Returns the currently active penalty configuration.
+     */
+    public PenaltyConfiguration getActivePenaltyConfiguration() {
+        return penaltyConfigurationRepository.findByActiveTrue()
+                .orElseThrow(() -> new RuntimeException("No active penalty configuration found"));
     }
 }

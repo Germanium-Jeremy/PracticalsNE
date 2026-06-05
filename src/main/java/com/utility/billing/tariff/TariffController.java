@@ -34,4 +34,22 @@ public class TariffController {
     public ResponseEntity<Tariff> getActiveTariff(@PathVariable com.utility.billing.meter.MeterType meterType) {
         return ResponseEntity.ok(tariffService.getActiveTariff(meterType));
     }
+
+    @PostMapping("/penalties")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PenaltyConfiguration> createPenaltyConfiguration(@Valid @RequestBody PenaltyConfigurationRequest request) {
+        return ResponseEntity.ok(tariffService.createPenaltyConfiguration(request));
+    }
+
+    @GetMapping("/penalties")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE')")
+    public ResponseEntity<List<PenaltyConfiguration>> getAllPenaltyConfigurations() {
+        return ResponseEntity.ok(tariffService.getAllPenaltyConfigurations());
+    }
+
+    @GetMapping("/penalties/active")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE', 'CUSTOMER')")
+    public ResponseEntity<PenaltyConfiguration> getActivePenaltyConfiguration() {
+        return ResponseEntity.ok(tariffService.getActivePenaltyConfiguration());
+    }
 }

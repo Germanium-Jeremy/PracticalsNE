@@ -44,6 +44,7 @@ public class BillingService {
     }
 
     // Applies financial penalties to all overdue bills based on the active penalty configuration
+    // Penalty is applied only if the bill has been unpaid for more than 5 months
     @Transactional
     public void applyPenalties() {
         penaltyConfigurationRepository.findByActiveTrue().ifPresent(config -> {
@@ -53,9 +54,13 @@ public class BillingService {
                     .toList();
 
             for (Bill bill : overdueBills) {
-                LocalDateTime dueDate = bill.getGeneratedDate().plusDays(30); // Assume 30 days credit
-                if (LocalDateTime.now().isAfter(dueDate)) {
-                    long monthsOverdue = ChronoUnit.MONTHS.between(dueDate, LocalDateTime.now()) + 1;
+                // Determine the end of the billing month as the start for overdue counting
+                // A bill for month M/Year Y is usually due by end of month M or start of M+1.
+                // Requirement: "delayed bills for more that 5 months which are unpaid"
+                LocalDateTime billingDate = LocalDateTime.of(bill.getBillingYear(), bill.getBillingMonth(), 1, 0, 0).plusMonths(1);
+                
+                if (LocalDateTime.now().isAfter(billingDate.plusMonths(5))) {
+                    long monthsOverdue = ChronoUnit.MONTHS.between(billingDate, LocalDateTime.now());
                     double penalty = config.getFixedAmount() + (bill.getBalance() * (config.getPercentagePerMonth() / 100.0) * monthsOverdue);
                     
                     bill.setPenaltyAmount(penalty);

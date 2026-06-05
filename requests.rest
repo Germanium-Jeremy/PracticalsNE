@@ -152,7 +152,7 @@ Content-Type: application/json
 GET {{base-url}}/api/payments/bill/1
 Authorization: Bearer {{token}}
 
-### 8. TARIFF MANAGEMENT (Admin Only)
+### 8. TARIFF & PENALTY MANAGEMENT (Admin Only)
 
 # @name getAllTariffs
 GET {{base-url}}/api/tariffs
@@ -170,3 +170,23 @@ Content-Type: application/json
   "tariffType": "FLAT_RATE",
   "rate": 350.0
 }
+
+###
+
+# @name createPenalty
+POST {{base-url}}/api/tariffs/penalties
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Standard Overdue Penalty",
+  "fixedAmount": 2000.0,
+  "percentagePerMonth": 2.5,
+  "active": true
+}
+
+###
+
+# @name getActivePenalty
+GET {{base-url}}/api/tariffs/penalties/active
+Authorization: Bearer {{token}}

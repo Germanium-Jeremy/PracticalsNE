@@ -52,7 +52,7 @@ class BillingServiceTest {
         notificationRepository = mock(com.utility.billing.notification.NotificationRepository.class);
         penaltyConfigurationRepository = mock(com.utility.billing.tariff.PenaltyConfigurationRepository.class);
         
-        tariffService = new com.utility.billing.tariff.TariffService(tariffRepository);
+        tariffService = new com.utility.billing.tariff.TariffService(tariffRepository, penaltyConfigurationRepository);
         notificationService = new com.utility.billing.notification.NotificationService(notificationRepository);
         
         billingService = new BillingService(
