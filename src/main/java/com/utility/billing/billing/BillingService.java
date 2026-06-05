@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,19 +25,48 @@ public class BillingService {
     private final MeterReadingRepository readingRepository;
     private final TariffService tariffService;
     private final NotificationService notificationService;
+    private final com.utility.billing.tariff.PenaltyConfigurationRepository penaltyConfigurationRepository;
 
     public BillingService(
             BillRepository billRepository, 
             MeterRepository meterRepository, 
             MeterReadingRepository readingRepository, 
             TariffService tariffService,
-            NotificationService notificationService
+            NotificationService notificationService,
+            com.utility.billing.tariff.PenaltyConfigurationRepository penaltyConfigurationRepository
     ) {
         this.billRepository = billRepository;
         this.meterRepository = meterRepository;
         this.readingRepository = readingRepository;
         this.tariffService = tariffService;
         this.notificationService = notificationService;
+        this.penaltyConfigurationRepository = penaltyConfigurationRepository;
+    }
+
+    @Transactional
+    public void applyPenalties() {
+        penaltyConfigurationRepository.findByActiveTrue().ifPresent(config -> {
+            List<Bill> overdueBills = billRepository.findAll().stream()
+                    .filter(b -> (b.getStatus() == BillStatus.APPROVED || b.getStatus() == BillStatus.PARTIALLY_PAID || b.getStatus() == BillStatus.OVERDUE))
+                    .filter(b -> b.getBalance() > 0)
+                    .toList();
+
+            for (Bill bill : overdueBills) {
+                LocalDateTime dueDate = bill.getGeneratedDate().plusDays(30); // Assume 30 days credit
+                if (LocalDateTime.now().isAfter(dueDate)) {
+                    long monthsOverdue = ChronoUnit.MONTHS.between(dueDate, LocalDateTime.now()) + 1;
+                    double penalty = config.getFixedAmount() + (bill.getBalance() * (config.getPercentagePerMonth() / 100.0) * monthsOverdue);
+                    
+                    bill.setPenaltyAmount(penalty);
+                    bill.setTotalAmount(bill.getTariffAmount() + bill.getTaxAmount() + penalty);
+                    bill.setBalance(bill.getTotalAmount() - bill.getPaidAmount());
+                    if (bill.getStatus() != BillStatus.PAID) {
+                        bill.setStatus(BillStatus.OVERDUE);
+                    }
+                    billRepository.save(bill);
+                }
+            }
+        });
     }
 
     @Transactional

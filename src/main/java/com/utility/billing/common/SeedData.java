@@ -33,15 +33,17 @@ public class SeedData implements CommandLineRunner {
     private final MeterReadingRepository readingRepository;
     private final BillRepository billRepository;
     private final TariffService tariffService;
+    private final com.utility.billing.tariff.PenaltyConfigurationRepository penaltyConfigurationRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SeedData(UserRepository userRepository, CustomerRepository customerRepository, MeterRepository meterRepository, MeterReadingRepository readingRepository, BillRepository billRepository, TariffService tariffService, PasswordEncoder passwordEncoder) {
+    public SeedData(UserRepository userRepository, CustomerRepository customerRepository, MeterRepository meterRepository, MeterReadingRepository readingRepository, BillRepository billRepository, TariffService tariffService, com.utility.billing.tariff.PenaltyConfigurationRepository penaltyConfigurationRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.meterRepository = meterRepository;
         this.readingRepository = readingRepository;
         this.billRepository = billRepository;
         this.tariffService = tariffService;
+        this.penaltyConfigurationRepository = penaltyConfigurationRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -72,14 +74,35 @@ public class SeedData implements CommandLineRunner {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
+        User finance = User.builder()
+                .fullName("Finance User")
+                .email("finance@wasac.gov.rw")
+                .phoneNumber("0780000003")
+                .password(passwordEncoder.encode("Finance123!"))
+                .role(Role.ROLE_FINANCE)
+                .status(UserStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
         userRepository.save(admin);
         userRepository.save(operator);
+        userRepository.save(finance);
 
         // 2. Tariffs
         tariffService.createTariff(MeterType.WATER, TariffType.FLAT_RATE, 350.0);
         tariffService.createTariff(MeterType.ELECTRICITY, TariffType.FLAT_RATE, 220.0);
 
-        // 3. Customers
+        // 3. Penalty Configuration
+        com.utility.billing.tariff.PenaltyConfiguration penaltyConfig = com.utility.billing.tariff.PenaltyConfiguration.builder()
+                .name("Standard Overdue Penalty")
+                .fixedAmount(500.0)
+                .percentagePerMonth(2.0)
+                .active(true)
+                .build();
+        penaltyConfigurationRepository.save(penaltyConfig);
+
+        // 4. Customers
         User customerUser = User.builder()
                 .fullName("John Doe")
                 .email("john.doe@example.com")

@@ -28,6 +28,13 @@ public class BillController {
         return ResponseEntity.ok(billingService.getBillById(id));
     }
 
+    @PostMapping("/calculate-penalties")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE')")
+    public ResponseEntity<Void> calculatePenalties() {
+        billingService.applyPenalties();
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/customer/{customerId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE') or @securityService.isCustomerOwner(#customerId)")
     public ResponseEntity<List<BillResponse>> getCustomerBills(@PathVariable Long customerId) {
