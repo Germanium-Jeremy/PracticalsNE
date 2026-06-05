@@ -3,10 +3,11 @@ package com.utility.billing.customer;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class CustomerRequest {
     @NotBlank(message = "Full names are required")
-    @Pattern(regexp = "^\\w+\\s+\\w+.*$", message = "Full name must contain at least two names (at least one space)")
+    @Pattern(regexp = "^[^\\s]+\\s+[^\\s]+.*$", message = "Full name must contain at least two names (at least one space)")
     private String fullNames;
 
     @NotBlank(message = "National ID is required")
@@ -18,6 +19,7 @@ public class CustomerRequest {
 
     @Pattern(regexp = "^(07[2389]\\d{7}|\\+2507[2389]\\d{7})$", 
             message = "Invalid phone number. Use 07... (10 digits) or +2507... (13 characters)")
+    @Size(min = 10, max = 13, message = "Phone number must be between 10 and 13 characters")
     private String phone;
 
     private String address;

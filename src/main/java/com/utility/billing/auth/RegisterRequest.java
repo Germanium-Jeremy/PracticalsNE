@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 
 public class RegisterRequest {
     @NotBlank(message = "Full name is required")
-    @Pattern(regexp = "^\\w+\\s+\\w+.*$", message = "Full name must contain at least two names (at least one space)")
+    @Pattern(regexp = "^[^\\s]+\\s+[^\\s]+.*$", message = "Full name must contain at least two names (at least one space)")
     private String fullName;
 
     @NotBlank(message = "Email is required")
@@ -17,6 +17,7 @@ public class RegisterRequest {
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^(07[2389]\\d{7}|\\+2507[2389]\\d{7})$", 
             message = "Invalid phone number. Use 07... (10 digits) or +2507... (13 characters)")
+    @Size(min = 10, max = 13, message = "Phone number must be between 10 and 13 characters")
     private String phoneNumber;
 
     @NotBlank(message = "Password is required")
