@@ -1,0 +1,62 @@
+Water and Sanitation Corporation (WASAC) and Rwanda Energy Group (REG). A National Utility Company (WASAC), responsible for distributing water and electricity in Rwanda, serves thousands of customers across different regions.
+Each customer is assigned one or more utility meters that record monthly consumption. While water services are billing on a postpaid basis, electricity is currently provided on a prepaid model. 
+To unify billing and improve customer experience, the utiulity company plans to transition electricity services to a postpaid system similar to water. 
+
+The current billing process is partly manual, which often leads to mistakes, delayed bills, and a lack of clear information for customers. Toi address this, the utility company aims to develop a secure and automated utility billing system 
+that will manage customers, meter readings, postpaid and prepaid billings, monthly bills, payments and notifications. 
+
+TASKS
+You have been hired as a Java Backend Developer to design and implement the backend of this system using Spring Boot and Advanced Java Technologies, ensuring strict business rules, data integrity and automated messaging with the following minimum features:
+
+Task 1: User management and Security (JWT)
+Implement a secure user management system using JWT-based authentication and authorization. 
+Users must have the following attributes: - Full name - Email (username) - Phone number - Password - Status (Active/Inactive)
+Roles to be implemented:
+- ROLE_ADMIN: Configure tariffs, approve bils, manage users
+- ROLE_OPERATOR: Capture meter readings
+- ROLE_FINANCE: Approve bills and payments
+- ROLE_CUSTOMER: view bills and payment history
+Functional Requirements: - Allow user signuo and login - Secure all endpoints except authentication
+
+Task 2: Customer and Meter management
+1. Customer management:
+Store and manage customer details: - Full names - National ID (Unique) - Email - Phone number - Address - Status (Active/Inactive)
+Rules: - Prevent duplicate customer registration - Inactive customer cannot receive bills
+2. Meter management:
+Each customer may have one or more meters with: - Meter number (unique) - Meter type (Water/Electricity) - Installation date - Status (Active/Inactive)
+
+Task 3: Meter Reading management
+Allow operators to capture meter readings with: - Meter - Previous Readings - Current readings - Reading date
+Business rules: 
+- Current readings must be greater that or equal to the previous readings
+- Only one reading per meter per month/year
+- Meter must be active
+
+Task 4: Tariff, Tax and Penalty Configuration
+Allow admins to Configure: - Consumption tariffs (flat or tier-based) - Fixed service charges - VAT or other taxes - Late payment penalties
+Rules: - Tariffs must be versioned - New tariffs apply only to future billing cycles
+
+Task 5: Payment processing
+Allow recording of customer payment with: - Bill reference - Amount paid - Payment method - Payment date
+Rules: 
+- Support partial and full Payment
+- Automatically update outstanding balance
+- Mark bill as PAID when balance reaches zero
+
+Task 6: Database routines and messaging
+Configure database-level routines (Trigger, stored procedure or cursors).
+Required behaviours:
+- On bill generation, insert a notification message
+- On full payment, update bill status asd notify User
+Message format: "Dear <CustomerName>, Your <Monthly/Year> utility bill of <Amount> FRW has been successfully processed.
+
+Instructions:
+- Provide codes that can be placed inside mermaid (mermaid.io) for generating ERD of the expected database based on postgresql.
+- The backend must be designed using spring boot. Spring Data JPA should be used to configure the database and generate APIs to be used for backend implementation.
+- Provide other mermaid codes to be used to draw the spring boot flow diagram indicating the functionality of the systen.
+- After proper configuration of the backend, records are added manually using either postman/swagger/application main class/DBMS level.
+- Document the APIs using swagger UI.
+- Perform authentication and authorization using JWT.
+- Manage all rules inicatted at every task.
+- No frontend is required or needed here. Testing may be perfomed using postman, swagger or sample data.
+- Provide a .md file with instrictions of how to run the application just built.
