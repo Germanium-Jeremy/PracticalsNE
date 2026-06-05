@@ -13,29 +13,37 @@ import java.time.LocalDateTime;
 })
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class MeterReading {
+    // Unique identifier for the meter reading record
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // The utility meter for which the reading is being captured
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meter_id", nullable = false)
     private Meter meter;
 
+    // The meter reading value from the previous billing cycle
     @Column(nullable = false)
     private Double previousReading;
 
+    // The current meter reading value captured for this cycle
     @Column(nullable = false)
     private Double currentReading;
 
+    // Timestamp when the reading was captured
     @Column(nullable = false)
     private LocalDateTime readingDate;
 
+    // The calendar month this reading represents for billing purposes
     @Column(name = "billing_month", nullable = false)
     private Integer month;
 
+    // The calendar year this reading represents for billing purposes
     @Column(name = "billing_year", nullable = false)
     private Integer year;
 
+    // The operator user who captured and entered this reading into the system
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "captured_by", nullable = false)
     private User capturedBy;

@@ -12,28 +12,39 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Customer {
+    // Unique identifier for the customer
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Full names of the customer as per their national ID
     @Column(nullable = false)
     private String fullNames;
 
+    // Unique national identification number (16 digits)
     @Column(unique = true, nullable = false)
     private String nationalId;
 
+    // Contact email for billing notifications
     private String email;
+
+    // Contact phone number for SMS notifications
     private String phone;
+
+    // Physical residence or billing address
     private String address;
 
+    // Account status (e.g., ACTIVE, INACTIVE) affecting billing capability
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CustomerStatus status;
 
+    // Timestamp when the customer record was first registered
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // Link to the system User account for login and authentication
     @OneToOne
     @JoinColumn(name = "user_id")
     private com.utility.billing.user.User user;

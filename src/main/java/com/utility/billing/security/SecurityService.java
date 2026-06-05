@@ -19,6 +19,7 @@ public class SecurityService {
         this.customerRepository = customerRepository;
     }
  
+    // Retrieves the email of the currently authenticated user from the SecurityContext
     private String getCurrentUserEmail() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof org.springframework.security.core.userdetails.User) {
@@ -29,6 +30,7 @@ public class SecurityService {
         return null;
     }
  
+    // Checks if the currently authenticated user is the owner of the specified bill
     public boolean isBillOwner(Long billId) {
         String userEmail = getCurrentUserEmail();
         if (userEmail == null) return false;
@@ -38,6 +40,7 @@ public class SecurityService {
                 .orElse(false);
     }
  
+    // Checks if the currently authenticated user is the owner of the specified user profile
     public boolean isUserOwner(Long userId) {
         String userEmail = getCurrentUserEmail();
         if (userEmail == null) return false;
@@ -47,6 +50,7 @@ public class SecurityService {
                 .orElse(false);
     }
  
+    // Checks if the currently authenticated user is the owner of the specified customer record
     public boolean isCustomerOwner(Long customerId) {
         String userEmail = getCurrentUserEmail();
         if (userEmail == null) return false;

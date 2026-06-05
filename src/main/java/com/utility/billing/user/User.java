@@ -13,34 +13,43 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "password"})
 public class User {
+    // Unique identifier for the user
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Full name of the user for identification and profile display
     @Column(nullable = false)
     private String fullName;
 
+    // Email address used for authentication and notifications
     @Column(unique = true, nullable = false)
     private String email;
 
+    // Contact phone number for the user
     @Column(nullable = false)
     private String phoneNumber;
 
+    // Encrypted password for secure authentication
     @Column(nullable = false)
     private String password;
 
+    // Current status of the user account (e.g., ACTIVE, INACTIVE)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status;
 
+    // Role assigned to the user for access control (e.g., ROLE_ADMIN, ROLE_CUSTOMER)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
+    // Timestamp when the user record was created
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // Timestamp when the user record was last updated
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
@@ -59,6 +68,7 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    // Builder pattern for convenient object instantiation
     public static UserBuilder builder() {
         return new UserBuilder();
     }

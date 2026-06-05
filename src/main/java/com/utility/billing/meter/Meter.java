@@ -10,23 +10,29 @@ import java.time.LocalDateTime;
 @Table(name = "meters")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Meter {
+    // Unique identifier for the utility meter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Unique serial number of the meter (e.g., WTR-12345)
     @Column(unique = true, nullable = false)
     private String meterNumber;
 
+    // Type of utility the meter measures (e.g., WATER, ELECTRICITY)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MeterType meterType;
 
+    // Date when the meter was installed at the customer's location
     private LocalDateTime installationDate;
 
+    // Current operational status of the meter (e.g., ACTIVE, INACTIVE)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MeterStatus status;
 
+    // Customer who owns and is responsible for this meter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;

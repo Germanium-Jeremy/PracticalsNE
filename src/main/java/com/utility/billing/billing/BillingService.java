@@ -43,6 +43,7 @@ public class BillingService {
         this.penaltyConfigurationRepository = penaltyConfigurationRepository;
     }
 
+    // Applies financial penalties to all overdue bills based on the active penalty configuration
     @Transactional
     public void applyPenalties() {
         penaltyConfigurationRepository.findByActiveTrue().ifPresent(config -> {
@@ -69,6 +70,7 @@ public class BillingService {
         });
     }
 
+    // Generates a new bill for a specific meter and billing period based on consumption and active tariffs
     @Transactional
     public Bill generateBill(Long meterId, Integer month, Integer year) {
         Meter meter = meterRepository.findById(meterId)
@@ -116,6 +118,7 @@ public class BillingService {
         return savedBill;
     }
 
+    // Approves a pending bill, allowing it to be paid by the customer
     @Transactional
     public BillResponse approveBill(Long billId) {
         Bill bill = billRepository.findById(billId)
@@ -131,6 +134,7 @@ public class BillingService {
         return mapToResponse(approvedBill);
     }
 
+    // Retrieves all bills associated with a specific customer
     public List<BillResponse> getCustomerBills(Long customerId) {
         return billRepository.findByCustomerId(customerId).stream()
                 .map(this::mapToResponse)
@@ -149,6 +153,7 @@ public class BillingService {
         return mapToResponse(bill);
     }
 
+    // Helper method to convert a Bill entity into a BillResponse DTO
     private BillResponse mapToResponse(Bill bill) {
         BillResponse response = new BillResponse();
         response.setId(bill.getId());

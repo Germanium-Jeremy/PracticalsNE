@@ -16,9 +16,11 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
+    // Secret key for signing and verifying JWT tokens
     @Value("${app.jwt.secret}")
     private String secret;
 
+    // Time in milliseconds before the JWT token expires
     @Value("${app.jwt.expiration-ms}")
     private long jwtExpirationMs;
 
@@ -31,6 +33,7 @@ public class JwtUtils {
         return claimsResolver.apply(claims);
     }
 
+    // Generates a new JWT token for a specific user
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
@@ -45,6 +48,7 @@ public class JwtUtils {
                 .compact();
     }
 
+    // Validates if the token belongs to the given user and is not expired
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
@@ -58,6 +62,7 @@ public class JwtUtils {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    // Parses all claims from a given JWT token securely
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith((javax.crypto.SecretKey) getSigningKey())
