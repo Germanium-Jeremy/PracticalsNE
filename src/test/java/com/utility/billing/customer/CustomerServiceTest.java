@@ -18,6 +18,10 @@ class CustomerServiceTest {
 
     @Mock
     private CustomerRepository customerRepository;
+    @Mock
+    private com.utility.billing.user.UserRepository userRepository;
+    @Mock
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private CustomerService customerService;

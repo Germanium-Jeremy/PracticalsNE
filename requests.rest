@@ -1,54 +1,172 @@
 @base-url = http://localhost:8080
-@auth-url = /api/auth
-@task-url = /api/tasks
-@token = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiZXRlcDcyMDQxIiwiaWF0IjoxNzgwMTU3MTM3LCJleHAiOjE3ODAyNDM1Mzd9.5YOC4iitH94wztP69RR5HzST8M8GA7cc3dOV7RZXEeE9iHnBxgK7e_DOCMbLRcO2knGyQlNCkioY3ZiLcjJu6g
+@token = {{login.response.body.accessToken}}
 
-### Index route
-GET {{base-url}}
+### 1. AUTHENTICATION
+
+# @name register
+POST {{base-url}}/api/auth/signup
 Content-Type: application/json
 
-### Login
-POST {{base-url}}{{auth-url}}/login
+{
+  "fullName": "New Customer",
+  "email": "customer@example.com",
+  "phoneNumber": "0780000001",
+  "password": "Password123!"
+}
+
+###
+
+# @name login
+POST {{base-url}}/api/auth/login
 Content-Type: application/json
 
-{ "username": "betep72041", "password": "Passw0rd@123" }
+{
+  "email": "admin@wasac.gov.rw",
+  "password": "AdminPassword123!"
+}
 
+### 2. USER MANAGEMENT (Admin Only)
 
-### Register
-POST {{base-url}}{{auth-url}}/signup
-Content-Type: application/json
+# @name getAllUsers
+GET {{base-url}}/api/users
+Authorization: Bearer {{token}}
 
-{ "username": "betep72041", "password": "Passw0rd@123", "email": "betep72041@googxs.com", "roles": ["user"] }
+###
 
-### Get all tasks (requires authentication)
-GET {{base-url}}{{task-url}}
+# @name getUserById
+GET {{base-url}}/api/users/1
+Authorization: Bearer {{token}}
+
+###
+
+# @name createUser
+POST {{base-url}}/api/users
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
+{
+  "fullName": "Finance Officer",
+  "email": "finance@wasac.gov.rw",
+  "phoneNumber": "0780000002",
+  "password": "Password123!",
+  "role": "ROLE_FINANCE",
+  "status": "ACTIVE"
+}
 
-### Create a new task (requires authentication)
-POST {{base-url}}{{task-url}}
-Authorization: Bearer {{token}} 
-Content-Type: application/json
+### 3. CUSTOMER MANAGEMENT (Admin Only)
 
-{ "title": "Task 3", "description": "Task 3 description" }
+# @name getAllCustomers
+GET {{base-url}}/api/customers
+Authorization: Bearer {{token}}
 
+###
 
-### Get a specific task by ID (requires authentication)
-GET {{base-url}}{{task-url}}/1
+# @name createCustomer
+POST {{base-url}}/api/customers
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
+{
+  "fullNames": "John Doe",
+  "nationalId": "1199080012345678",
+  "email": "john.doe@example.com",
+  "phone": "0781234567",
+  "address": "Kigali, Rwanda",
+  "status": "ACTIVE"
+}
 
-### Update a task by ID (requires authentication)
-PUT {{base-url}}{{task-url}}/2
+### 4. METER MANAGEMENT (Admin Only)
+
+# @name getAllMeters
+GET {{base-url}}/api/meters
+Authorization: Bearer {{token}}
+
+###
+
+# @name createMeter
+POST {{base-url}}/api/meters
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-{ "title": "Updated Task 3", "description": "Task 3 has been updated" }
+{
+  "meterNumber": "WTR-1001",
+  "meterType": "WATER",
+  "customerId": 1,
+  "status": "ACTIVE"
+}
 
+### 5. METER READINGS (Operator/Admin Only)
 
-### Delete a task by ID (requires administration role)
-DELETE {{base-url}}{{task-url}}/1
+# @name captureReading
+POST {{base-url}}/api/readings
 Authorization: Bearer {{token}}
 Content-Type: application/json
+
+{
+  "meterId": 1,
+  "currentReading": 150.5,
+  "month": 6,
+  "year": 2026
+}
+
+### 6. BILLING MANAGEMENT
+
+# @name getAllBills
+GET {{base-url}}/api/bills
+Authorization: Bearer {{token}}
+
+###
+
+# @name getMyBills (Customer Only)
+GET {{base-url}}/api/bills/customer/1
+Authorization: Bearer {{token}}
+
+###
+
+# @name approveBill (Finance/Admin Only)
+PATCH {{base-url}}/api/bills/1/approve
+Authorization: Bearer {{token}}
+
+###
+
+# @name calculatePenalties (Finance/Admin Only)
+POST {{base-url}}/api/bills/calculate-penalties
+Authorization: Bearer {{token}}
+
+### 7. PAYMENT PROCESSING
+
+# @name processPayment
+POST {{base-url}}/api/payments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "billId": 1,
+  "amount": 5000.0,
+  "method": "MOBILE_MONEY"
+}
+
+###
+
+# @name getPaymentHistory
+GET {{base-url}}/api/payments/bill/1
+Authorization: Bearer {{token}}
+
+### 8. TARIFF MANAGEMENT (Admin Only)
+
+# @name getAllTariffs
+GET {{base-url}}/api/tariffs
+Authorization: Bearer {{token}}
+
+###
+
+# @name createTariff
+POST {{base-url}}/api/tariffs
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "meterType": "WATER",
+  "tariffType": "FLAT_RATE",
+  "rate": 350.0
+}
