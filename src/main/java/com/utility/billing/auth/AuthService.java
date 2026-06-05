@@ -1,6 +1,7 @@
 package com.utility.billing.auth;
 
 import com.utility.billing.security.JwtUtils;
+import com.utility.billing.user.Role;
 import com.utility.billing.user.User;
 import com.utility.billing.user.UserRepository;
 import com.utility.billing.user.UserStatus;
@@ -40,7 +41,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(Role.ROLE_CUSTOMER)
                 .status(UserStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())

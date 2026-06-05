@@ -50,10 +50,17 @@ public class CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        customer.setFullNames(request.getFullNames());
-        customer.setEmail(request.getEmail());
-        customer.setPhone(request.getPhone());
-        customer.setAddress(request.getAddress());
+        if (request.getFullNames() != null) customer.setFullNames(request.getFullNames());
+        if (request.getNationalId() != null) {
+            customerRepository.findByNationalId(request.getNationalId())
+                    .ifPresent(existing -> {
+                        if (!existing.getId().equals(id)) throw new RuntimeException("National ID already taken");
+                    });
+            customer.setNationalId(request.getNationalId());
+        }
+        if (request.getEmail() != null) customer.setEmail(request.getEmail());
+        if (request.getPhone() != null) customer.setPhone(request.getPhone());
+        if (request.getAddress() != null) customer.setAddress(request.getAddress());
         if (request.getStatus() != null) {
             customer.setStatus(request.getStatus());
         }

@@ -2,9 +2,11 @@ package com.utility.billing.meter;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public class MeterRequest {
     @NotBlank(message = "Meter number is required")
+    @Pattern(regexp = "^WTR-\\d+$", message = "Meter number must be in the format WTR-number (e.g., WTR-12345)")
     private String meterNumber;
     @NotNull(message = "Meter type is required")
     private MeterType meterType;

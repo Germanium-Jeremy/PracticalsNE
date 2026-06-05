@@ -1,11 +1,8 @@
-package com.utility.billing.auth;
+package com.utility.billing.user;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
-public class RegisterRequest {
+public class UserRequest {
     @NotBlank(message = "Full name is required")
     @Pattern(regexp = "^\\w+\\s+\\w+.*$", message = "Full name must contain at least two names (at least one space)")
     private String fullName;
@@ -19,11 +16,11 @@ public class RegisterRequest {
             message = "Invalid phone number. Use 07... (10 digits) or +2507... (13 characters)")
     private String phoneNumber;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
-            message = "Password must contain at least one digit, one lowercase, one uppercase, one special character, and no whitespace")
-    private String password;
+    private String password; // Optional during update
+
+    private UserStatus status;
+
+    private Role role;
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
@@ -33,4 +30,8 @@ public class RegisterRequest {
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public UserStatus getStatus() { return status; }
+    public void setStatus(UserStatus status) { this.status = status; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 }

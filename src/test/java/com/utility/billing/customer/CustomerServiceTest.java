@@ -29,12 +29,12 @@ class CustomerServiceTest {
     void setUp() {
         customerRequest = new CustomerRequest();
         customerRequest.setFullNames("John Doe");
-        customerRequest.setNationalId("1234567890");
+        customerRequest.setNationalId("1199080012345678");
 
         customer = Customer.builder()
                 .id(1L)
                 .fullNames("John Doe")
-                .nationalId("1234567890")
+                .nationalId("1199080012345678")
                 .status(CustomerStatus.ACTIVE)
                 .build();
     }

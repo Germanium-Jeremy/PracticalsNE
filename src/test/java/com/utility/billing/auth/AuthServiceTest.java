@@ -47,12 +47,11 @@ class AuthServiceTest {
         registerRequest = new RegisterRequest();
         registerRequest.setFullName("Test User");
         registerRequest.setEmail("test@example.com");
-        registerRequest.setPassword("password");
-        registerRequest.setRole(Role.ROLE_CUSTOMER);
+        registerRequest.setPassword("Password123!");
 
         loginRequest = new LoginRequest();
         loginRequest.setEmail("test@example.com");
-        loginRequest.setPassword("password");
+        loginRequest.setPassword("Password123!");
     }
 
     @Test
