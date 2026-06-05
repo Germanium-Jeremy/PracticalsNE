@@ -1,7 +1,6 @@
 package com.utility.billing.tariff;
 
 import com.utility.billing.meter.MeterType;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,10 +8,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class TariffService {
 
     private final TariffRepository tariffRepository;
+
+    public TariffService(TariffRepository tariffRepository) {
+        this.tariffRepository = tariffRepository;
+    }
 
     @Transactional
     public Tariff createTariff(MeterType meterType, TariffType tariffType, Double rate) {

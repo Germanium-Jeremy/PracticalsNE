@@ -1,7 +1,6 @@
 package com.utility.billing.meter;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,10 +8,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/meters")
-@RequiredArgsConstructor
 public class MeterController {
 
     private final MeterService meterService;
+
+    public MeterController(MeterService meterService) {
+        this.meterService = meterService;
+    }
 
     @PostMapping
     public ResponseEntity<MeterResponse> createMeter(@Valid @RequestBody MeterRequest request) {

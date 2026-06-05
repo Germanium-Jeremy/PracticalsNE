@@ -11,10 +11,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,10 +51,19 @@ class PaymentServiceTest {
                 .build();
         user = User.builder().email("fin@test.com").build();
 
-        SecurityContext securityContext = mock(SecurityContext.class);
-        Authentication authentication = mock(Authentication.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn("fin@test.com");
+        // Mock SecurityContextHolder without using mock() on interfaces (Java 25 fix)
+        final Authentication authentication = new UsernamePasswordAuthenticationToken(
+                "fin@test.com", 
+                null, 
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_FINANCE"))
+        );
+        
+        SecurityContext securityContext = new SecurityContext() {
+            @Override
+            public Authentication getAuthentication() { return authentication; }
+            @Override
+            public void setAuthentication(Authentication authentication) {}
+        };
         SecurityContextHolder.setContext(securityContext);
     }
 

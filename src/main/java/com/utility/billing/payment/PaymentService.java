@@ -5,7 +5,6 @@ import com.utility.billing.billing.BillRepository;
 import com.utility.billing.billing.BillStatus;
 import com.utility.billing.user.User;
 import com.utility.billing.user.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final BillRepository billRepository;
     private final UserRepository userRepository;
+
+    public PaymentService(PaymentRepository paymentRepository, BillRepository billRepository, UserRepository userRepository) {
+        this.paymentRepository = paymentRepository;
+        this.billRepository = billRepository;
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public Payment processPayment(Long billId, Double amount, PaymentMethod method) {

@@ -18,7 +18,6 @@ import com.utility.billing.user.Role;
 import com.utility.billing.user.User;
 import com.utility.billing.user.UserRepository;
 import com.utility.billing.user.UserStatus;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-@RequiredArgsConstructor
 public class SeedData implements CommandLineRunner {
 
     private final UserRepository userRepository;
@@ -36,6 +34,16 @@ public class SeedData implements CommandLineRunner {
     private final BillRepository billRepository;
     private final TariffService tariffService;
     private final PasswordEncoder passwordEncoder;
+
+    public SeedData(UserRepository userRepository, CustomerRepository customerRepository, MeterRepository meterRepository, MeterReadingRepository readingRepository, BillRepository billRepository, TariffService tariffService, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
+        this.meterRepository = meterRepository;
+        this.readingRepository = readingRepository;
+        this.billRepository = billRepository;
+        this.tariffService = tariffService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public void run(String... args) {

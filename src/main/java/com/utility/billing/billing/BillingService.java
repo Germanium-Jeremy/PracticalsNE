@@ -7,7 +7,6 @@ import com.utility.billing.reading.MeterReading;
 import com.utility.billing.reading.MeterReadingRepository;
 import com.utility.billing.tariff.Tariff;
 import com.utility.billing.tariff.TariffService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +15,19 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class BillingService {
 
     private final BillRepository billRepository;
     private final MeterRepository meterRepository;
     private final MeterReadingRepository readingRepository;
     private final TariffService tariffService;
+
+    public BillingService(BillRepository billRepository, MeterRepository meterRepository, MeterReadingRepository readingRepository, TariffService tariffService) {
+        this.billRepository = billRepository;
+        this.meterRepository = meterRepository;
+        this.readingRepository = readingRepository;
+        this.tariffService = tariffService;
+    }
 
     @Transactional
     public Bill generateBill(Long meterId, Integer month, Integer year) {

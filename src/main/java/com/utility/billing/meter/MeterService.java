@@ -2,7 +2,6 @@ package com.utility.billing.meter;
 
 import com.utility.billing.customer.Customer;
 import com.utility.billing.customer.CustomerRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,11 +10,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class MeterService {
 
     private final MeterRepository meterRepository;
     private final CustomerRepository customerRepository;
+
+    public MeterService(MeterRepository meterRepository, CustomerRepository customerRepository) {
+        this.meterRepository = meterRepository;
+        this.customerRepository = customerRepository;
+    }
 
     public MeterResponse createMeter(MeterRequest request) {
         if (meterRepository.existsByMeterNumber(request.getMeterNumber())) {
