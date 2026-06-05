@@ -1,8 +1,14 @@
 package com.utility.billing.customer;
 
+import com.utility.billing.user.Role;
+import com.utility.billing.user.User;
+import com.utility.billing.user.UserRepository;
+import com.utility.billing.user.UserStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,14 +16,38 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public CustomerResponse createCustomer(CustomerRequest request) {
         if (customerRepository.existsByNationalId(request.getNationalId())) {
             throw new RuntimeException("Customer with this National ID already exists");
+        }
+
+        // Create User account for the customer so they can log in
+        User user = null;
+        if (request.getEmail() != null) {
+            user = userRepository.findByEmail(request.getEmail()).orElse(null);
+            if (user == null) {
+                user = User.builder()
+                        .fullName(request.getFullNames())
+                        .email(request.getEmail())
+                        .phoneNumber(request.getPhone())
+                        .password(passwordEncoder.encode("Customer123!")) // Default password
+                        .role(Role.ROLE_CUSTOMER)
+                        .status(UserStatus.ACTIVE)
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build();
+                user = userRepository.save(user);
+            }
         }
 
         Customer customer = Customer.builder()
@@ -27,6 +57,7 @@ public class CustomerService {
                 .phone(request.getPhone())
                 .address(request.getAddress())
                 .status(CustomerStatus.ACTIVE)
+                .user(user)
                 .build();
 
         Customer savedCustomer = customerRepository.save(customer);

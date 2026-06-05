@@ -24,6 +24,7 @@ public class MeterReadingController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public ResponseEntity<List<MeterReadingResponse>> getAllReadings() {
         return ResponseEntity.ok(readingService.getAllReadings());
     }

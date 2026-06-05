@@ -1,5 +1,6 @@
 package com.utility.billing.reading;
 
+import com.utility.billing.billing.BillingService;
 import com.utility.billing.meter.Meter;
 import com.utility.billing.meter.MeterRepository;
 import com.utility.billing.meter.MeterStatus;
@@ -19,11 +20,18 @@ public class MeterReadingService {
     private final MeterReadingRepository readingRepository;
     private final MeterRepository meterRepository;
     private final UserRepository userRepository;
+    private final BillingService billingService;
 
-    public MeterReadingService(MeterReadingRepository readingRepository, MeterRepository meterRepository, UserRepository userRepository) {
+    public MeterReadingService(
+            MeterReadingRepository readingRepository, 
+            MeterRepository meterRepository, 
+            UserRepository userRepository,
+            BillingService billingService
+    ) {
         this.readingRepository = readingRepository;
         this.meterRepository = meterRepository;
         this.userRepository = userRepository;
+        this.billingService = billingService;
     }
 
     @Transactional
@@ -61,7 +69,12 @@ public class MeterReadingService {
                 .capturedBy(capturedBy)
                 .build();
 
-        return mapToResponse(readingRepository.save(reading));
+        MeterReading savedReading = readingRepository.save(reading);
+
+        // Automatically generate bill after capturing reading
+        billingService.generateBill(meter.getId(), reading.getMonth(), reading.getYear());
+
+        return mapToResponse(savedReading);
     }
 
     public List<MeterReadingResponse> getAllReadings() {

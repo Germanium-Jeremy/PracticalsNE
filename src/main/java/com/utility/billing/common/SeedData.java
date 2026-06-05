@@ -80,6 +80,18 @@ public class SeedData implements CommandLineRunner {
         tariffService.createTariff(MeterType.ELECTRICITY, TariffType.FLAT_RATE, 220.0);
 
         // 3. Customers
+        User customerUser = User.builder()
+                .fullName("John Doe")
+                .email("john.doe@example.com")
+                .phoneNumber("0781234567")
+                .password(passwordEncoder.encode("Customer123!"))
+                .role(Role.ROLE_CUSTOMER)
+                .status(UserStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        userRepository.save(customerUser);
+
         Customer customer1 = Customer.builder()
                 .fullNames("John Doe")
                 .nationalId("1199080012345678")
@@ -88,6 +100,7 @@ public class SeedData implements CommandLineRunner {
                 .address("Kigali, Rwanda")
                 .status(CustomerStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
+                .user(customerUser)
                 .build();
         customerRepository.save(customer1);
 

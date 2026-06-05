@@ -1,5 +1,6 @@
 package com.utility.billing.meter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.utility.billing.customer.Customer;
 import jakarta.persistence.*;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "meters")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Meter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

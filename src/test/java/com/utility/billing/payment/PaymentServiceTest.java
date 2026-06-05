@@ -33,6 +33,8 @@ class PaymentServiceTest {
     private BillRepository billRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private com.utility.billing.notification.NotificationService notificationService;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -69,27 +71,39 @@ class PaymentServiceTest {
 
     @Test
     void processPayment_ShouldReturnPayment_WhenSuccessful() {
+        PaymentRequest request = new PaymentRequest();
+        request.setBillId(1L);
+        request.setAmount(500.0);
+        request.setMethod(PaymentMethod.CASH);
+
         when(billRepository.findById(any())).thenReturn(Optional.of(bill));
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
         when(paymentRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        Payment payment = paymentService.processPayment(1L, 500.0, PaymentMethod.CASH);
+        PaymentResponse response = paymentService.processPayment(request);
 
-        assertNotNull(payment);
+        assertNotNull(response);
         assertEquals(500.0, bill.getPaidAmount());
         assertEquals(500.0, bill.getBalance());
         assertEquals(BillStatus.PARTIALLY_PAID, bill.getStatus());
+        verify(notificationService).sendPaymentNotification(any(), eq(500.0), any());
     }
 
     @Test
     void processPayment_ShouldMarkPaid_WhenBalanceZero() {
+        PaymentRequest request = new PaymentRequest();
+        request.setBillId(1L);
+        request.setAmount(1000.0);
+        request.setMethod(PaymentMethod.CASH);
+
         when(billRepository.findById(any())).thenReturn(Optional.of(bill));
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
         when(paymentRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        paymentService.processPayment(1L, 1000.0, PaymentMethod.CASH);
+        paymentService.processPayment(request);
 
         assertEquals(0.0, bill.getBalance());
         assertEquals(BillStatus.PAID, bill.getStatus());
+        verify(notificationService).sendPaymentNotification(any(), eq(1000.0), any());
     }
 }

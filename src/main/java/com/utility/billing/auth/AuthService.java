@@ -1,5 +1,8 @@
 package com.utility.billing.auth;
 
+import com.utility.billing.customer.Customer;
+import com.utility.billing.customer.CustomerRepository;
+import com.utility.billing.customer.CustomerStatus;
 import com.utility.billing.security.JwtUtils;
 import com.utility.billing.user.Role;
 import com.utility.billing.user.User;
@@ -11,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -18,19 +22,29 @@ import java.time.LocalDateTime;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils, AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+    public AuthService(
+            UserRepository userRepository, 
+            CustomerRepository customerRepository,
+            PasswordEncoder passwordEncoder, 
+            JwtUtils jwtUtils, 
+            AuthenticationManager authenticationManager, 
+            UserDetailsService userDetailsService
+    ) {
         this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
     }
 
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
@@ -47,7 +61,29 @@ public class AuthService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Check if a customer already exists with this email but no user link
+        Customer customer = customerRepository.findAll().stream()
+                .filter(c -> c.getEmail() != null && c.getEmail().equalsIgnoreCase(request.getEmail()))
+                .findFirst()
+                .orElse(null);
+
+        if (customer != null) {
+            customer.setUser(savedUser);
+            customerRepository.save(customer);
+        } else {
+            // Link customer automatically for regular registrations
+            customer = Customer.builder()
+                    .fullNames(request.getFullName())
+                    .email(request.getEmail())
+                    .phone(request.getPhoneNumber())
+                    .nationalId("REG-" + savedUser.getId()) // Use REG prefix for self-registered
+                    .status(CustomerStatus.ACTIVE)
+                    .user(savedUser)
+                    .build();
+            customerRepository.save(customer);
+        }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         String accessToken = jwtUtils.generateToken(userDetails);

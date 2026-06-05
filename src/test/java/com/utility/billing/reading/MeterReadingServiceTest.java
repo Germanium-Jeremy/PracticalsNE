@@ -33,6 +33,8 @@ class MeterReadingServiceTest {
     private MeterRepository meterRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private com.utility.billing.billing.BillingService billingService;
 
     @InjectMocks
     private MeterReadingService readingService;
