@@ -34,10 +34,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // Current status of the user account (e.g., ACTIVE, INACTIVE)
+    // Current status of the user account (e.g., ACTIVE, INACTIVE, PENDING_ACTIVATION)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status;
+
+    // Activation token for account verification (OTP)
+    @Column
+    private String activationToken;
 
     // Role assigned to the user for access control (e.g., ROLE_ADMIN, ROLE_CUSTOMER)
     @Enumerated(EnumType.STRING)
@@ -56,7 +60,7 @@ public class User {
 
     public User() {}
 
-    public User(Long id, String fullName, String email, String phoneNumber, String password, UserStatus status, Role role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(Long id, String fullName, String email, String phoneNumber, String password, UserStatus status, Role role, String activationToken, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -64,6 +68,7 @@ public class User {
         this.password = password;
         this.status = status;
         this.role = role;
+        this.activationToken = activationToken;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -87,6 +92,8 @@ public class User {
     public void setStatus(UserStatus status) { this.status = status; }
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+    public String getActivationToken() { return activationToken; }
+    public void setActivationToken(String activationToken) { this.activationToken = activationToken; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
@@ -100,6 +107,7 @@ public class User {
         private String password;
         private UserStatus status;
         private Role role;
+        private String activationToken;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
@@ -110,11 +118,12 @@ public class User {
         public UserBuilder password(String password) { this.password = password; return this; }
         public UserBuilder status(UserStatus status) { this.status = status; return this; }
         public UserBuilder role(Role role) { this.role = role; return this; }
+        public UserBuilder activationToken(String activationToken) { this.activationToken = activationToken; return this; }
         public UserBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
         public UserBuilder updatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; return this; }
 
         public User build() {
-            return new User(id, fullName, email, phoneNumber, password, status, role, createdAt, updatedAt);
+            return new User(id, fullName, email, phoneNumber, password, status, role, activationToken, createdAt, updatedAt);
         }
     }
 }

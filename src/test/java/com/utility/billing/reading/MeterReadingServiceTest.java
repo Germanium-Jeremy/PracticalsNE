@@ -34,6 +34,7 @@ class MeterReadingServiceTest {
     @Mock
     private UserRepository userRepository;
     
+    private org.springframework.mail.javamail.JavaMailSender mailSender;
     private com.utility.billing.billing.BillingService billingService;
     private com.utility.billing.tariff.TariffService tariffService;
     private com.utility.billing.notification.NotificationService notificationService;
@@ -55,9 +56,10 @@ class MeterReadingServiceTest {
         tariffRepository = mock(com.utility.billing.tariff.TariffRepository.class);
         notificationRepository = mock(com.utility.billing.notification.NotificationRepository.class);
         penaltyConfigurationRepository = mock(com.utility.billing.tariff.PenaltyConfigurationRepository.class);
+        mailSender = mock(org.springframework.mail.javamail.JavaMailSender.class);
         
         tariffService = new com.utility.billing.tariff.TariffService(tariffRepository, penaltyConfigurationRepository);
-        notificationService = new com.utility.billing.notification.NotificationService(notificationRepository);
+        notificationService = new com.utility.billing.notification.NotificationService(notificationRepository, mailSender);
         
         billingService = new com.utility.billing.billing.BillingService(
                 billRepository, meterRepository, readingRepository, 

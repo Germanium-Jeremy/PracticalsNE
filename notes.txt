@@ -1,1 +1,8 @@
 ./mvnw spring-boot:run -e
+
+
+Admin: admin@wasac.gov.rw - Admin123! - eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkB3YXNhYy5nb3YucnciLCJpYXQiOjE3ODA4MzMxNTIsImV4cCI6MTc4MDgzNjc1Mn0.pMjMGpA1VTh_3jJEHTpCTPyFCECtMck3yeKKgKDyjMaJfexvO74XRpi_2Fv9cQ7HaYBHjMPomILHHdhq8p5SUQ
+Finance: finance@wasac.gov.rw - Finance123!
+Operator: operator@wasac.gov.rw - Operator123! -
+Customer: john.doe@example.com - Customer123! -
+Customer: djeremynk@gmail.com - Passw0rd@123 - eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkamVyZW15bmtAZ21haWwuY29tIiwiaWF0IjoxNzgwODMzMDc0LCJleHAiOjE3ODA4MzY2NzR9.MZieC-Yb3fbpie0Wqe4dR9kFRQpgnuunAhkUx2ZcBkkvwImcUSXSSL7rA96YHR7RYFTG0geq4lYh1za6HLJbvQ

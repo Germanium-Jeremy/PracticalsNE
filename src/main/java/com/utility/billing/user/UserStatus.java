@@ -2,5 +2,6 @@ package com.utility.billing.user;
 
 public enum UserStatus {
     ACTIVE,
-    INACTIVE
+    INACTIVE,
+    PENDING_ACTIVATION
 }

@@ -1,6 +1,7 @@
 package com.utility.billing.auth;
 
 import com.utility.billing.customer.CustomerRepository;
+import com.utility.billing.notification.NotificationService;
 import com.utility.billing.security.JwtUtils;
 import com.utility.billing.user.User;
 import com.utility.billing.user.UserRepository;
@@ -37,6 +38,10 @@ class AuthServiceTest {
     private UserDetailsService userDetailsService;
     @Mock
     private AuthenticationManager authenticationManager;
+    
+    private org.springframework.mail.javamail.JavaMailSender mailSender;
+    private com.utility.billing.notification.NotificationService notificationService;
+    private com.utility.billing.notification.NotificationRepository notificationRepository;
 
     private JwtUtils realJwtUtils;
 
@@ -48,11 +53,15 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
+        notificationRepository = mock(com.utility.billing.notification.NotificationRepository.class);
+        mailSender = mock(org.springframework.mail.javamail.JavaMailSender.class);
+        notificationService = new com.utility.billing.notification.NotificationService(notificationRepository, mailSender);
+        
         realJwtUtils = new JwtUtils();
         ReflectionTestUtils.setField(realJwtUtils, "secret", "9a6111f185c74236968037307044a29a6111f185c74236968037307044a29a6111f185c74236968037307044a2");
         ReflectionTestUtils.setField(realJwtUtils, "jwtExpirationMs", 3600000L);
 
-        authService = new AuthService(userRepository, customerRepository, passwordEncoder, realJwtUtils, authenticationManager, userDetailsService);
+        authService = new AuthService(userRepository, customerRepository, passwordEncoder, realJwtUtils, authenticationManager, userDetailsService, notificationService);
 
         registerRequest = new RegisterRequest();
         registerRequest.setFullName("John Doe");
@@ -76,6 +85,27 @@ class AuthServiceTest {
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         
+        AuthResponse response = authService.register(registerRequest);
+
+        assertNotNull(response);
+        assertNotNull(response.getMessage());
+        assertNull(response.getAccessToken());
+        verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    void verifyOtp_ShouldReturnAccessToken_WhenOtpValid() {
+        User user = User.builder()
+                .email("test@example.com")
+                .status(UserStatus.PENDING_ACTIVATION)
+                .activationToken("123456")
+                .role(Role.ROLE_CUSTOMER)
+                .build();
+        
+        VerifyOtpRequest request = new VerifyOtpRequest("test@example.com", "123456");
+        
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                 .username("test@example.com")
                 .password("password")
@@ -83,11 +113,12 @@ class AuthServiceTest {
                 .build();
         when(userDetailsService.loadUserByUsername(any())).thenReturn(userDetails);
 
-        AuthResponse response = authService.register(registerRequest);
+        AuthResponse response = authService.verifyOtp(request);
 
         assertNotNull(response);
         assertNotNull(response.getAccessToken());
-        verify(userRepository).save(any(User.class));
+        assertEquals(UserStatus.ACTIVE, user.getStatus());
+        assertNull(user.getActivationToken());
     }
 
     @Test

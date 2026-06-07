@@ -30,6 +30,7 @@ public class ApplicationConfig {
                         .username(user.getEmail())
                         .password(user.getPassword())
                         .authorities(user.getRole().name())
+                        .disabled(user.getStatus() != com.utility.billing.user.UserStatus.ACTIVE)
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }

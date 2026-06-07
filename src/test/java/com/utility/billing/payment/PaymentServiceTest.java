@@ -34,6 +34,8 @@ class PaymentServiceTest {
     @Mock
     private UserRepository userRepository;
     
+    private org.springframework.mail.javamail.JavaMailSender mailSender;
+    
     // Using a manual implementation instead of Mockito.mock for NotificationService to avoid Java 25 issues
     private com.utility.billing.notification.NotificationService notificationService;
     private com.utility.billing.notification.NotificationRepository notificationRepository;
@@ -47,7 +49,8 @@ class PaymentServiceTest {
     @BeforeEach
     void setUp() {
         notificationRepository = mock(com.utility.billing.notification.NotificationRepository.class);
-        notificationService = new com.utility.billing.notification.NotificationService(notificationRepository);
+        mailSender = mock(org.springframework.mail.javamail.JavaMailSender.class);
+        notificationService = new com.utility.billing.notification.NotificationService(notificationRepository, mailSender);
         paymentService = new PaymentService(paymentRepository, billRepository, userRepository, notificationService);
 
         com.utility.billing.customer.Customer customer = com.utility.billing.customer.Customer.builder()

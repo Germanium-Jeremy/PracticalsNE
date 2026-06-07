@@ -4,7 +4,7 @@
 ### 1. AUTHENTICATION
 
 # @name register
-POST {{base-url}}/api/auth/signup
+POST {{base-url}}/api/auth/register
 Content-Type: application/json
 
 {
@@ -12,6 +12,17 @@ Content-Type: application/json
   "email": "customer@example.com",
   "phoneNumber": "0780000001",
   "password": "Password123!"
+}
+
+###
+
+# @name verifyOtp
+POST {{base-url}}/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "otp": "123456"
 }
 
 ###

@@ -24,7 +24,7 @@ Backend API for Water and Sanitation Corporation (WASAC) and Rwanda Energy Group
 - `DB_PORT` (default: 5432)
 - `DB_NAME` (default: utility_billing)
 - `DB_USERNAME` (default: postgres)
-- `DB_PASSWORD` (default: postgres)
+- `DB_PASSWORD` (default: root)
 
 ## Build & Run
 ```bash
